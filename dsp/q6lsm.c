@@ -2129,17 +2129,28 @@ static int q6lsm_mmapcallback(struct apr_client_data *data, void *priv)
 		lsm_common.set_custom_topology = 1;
 		return 0;
 	}
+	
+	/*
+	The payload_size can be either 4 or 8 bytes.
+	It has to be verified whether the payload_size is
+	atleast 4 bytes. If it is less, returns errorcode.
 
-	if (data->payload_size < sizeof(uint32_t)) {
+	The opcode for 4 bytes is 0x12A80
+	The opcode for 8 bytes is 0x110E8.
+	 
+	*/
+
+	if (data->payload_size < (2 * sizeof(uint16_t))) {
 		pr_err("%s: payload has invalid size[%d]\n", __func__,
 			data->payload_size);
 		return -EINVAL;
 	}
 
 	command = payload[0];
+	retcode = payload[1];
 	sid = (data->token >> 8) & 0x0F;
-	pr_debug("%s: opcode 0x%x command 0x%x SID 0x%x\n",
-		 __func__, data->opcode, command, sid);
+	pr_debug("%s: opcode 0x%x command 0x%x return code 0x%x SID 0x%x\n",
+		 __func__, data->opcode, command, retcode, sid);
 	client = q6lsm_get_lsm_client(sid);
 	if (!client) {
 		pr_debug("%s: Session %d already freed\n", __func__, sid);
@@ -2165,15 +2176,6 @@ static int q6lsm_mmapcallback(struct apr_client_data *data, void *priv)
 			wake_up(&client->cmd_wait);
 			break;
 		case LSM_SESSION_CMD_SHARED_MEM_MAP_REGIONS:
-			if (data->payload_size < (2 * sizeof(uint32_t))) {
-				pr_err("%s: payload has invalid size[%d]\n", __func__,
-					data->payload_size);
-				return -EINVAL;
-			}
-			retcode = payload[1];
-			pr_debug("%s: opcode 0x%x return code 0x%x SID 0x%x\n",
-				__func__, data->opcode, retcode, sid);
-
 			if (retcode != 0) {
 				/* error state, signal to stop waiting */
 				if (atomic_read(&client->cmd_state) ==
@@ -2194,8 +2196,8 @@ static int q6lsm_mmapcallback(struct apr_client_data *data, void *priv)
 		}
 		/* fallthrough */
 	default:
-		pr_debug("%s: command 0x%x opcode 0x%x\n",
-			 __func__, command, data->opcode);
+		pr_debug("%s: command 0x%x return code 0x%x opcode 0x%x\n",
+			 __func__, command, retcode, data->opcode);
 		break;
 	}
 	if (client->cb)
