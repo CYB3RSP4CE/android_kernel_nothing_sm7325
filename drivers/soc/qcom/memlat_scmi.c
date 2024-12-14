@@ -17,7 +17,7 @@ static int scmi_memlat_probe(struct scmi_device *sdev)
 {
 	struct scmi_handle *handle = sdev->handle;
 
-	if (!handle || !handle->memlat_ops)
+	if (!handle)
 		return -ENODEV;
 
 	rimps_memlat_init(handle);
