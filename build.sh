@@ -49,7 +49,7 @@ CLANG_DIR="$TC_DIR/linux-x86/clang-r547379"
 AK3_DIR="$HOME/AnyKernel3"
 DEFCONFIG="spacewar_defconfig"
 
-MAKE_PARAMS="O=out ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1 \
+MAKE_PARAMS="O=out ARCH=arm64 CC=clang CLANG_TRIPLE=clang LLVM=1 LLVM_IAS=1 \
 	CROSS_COMPILE=aarch64-linux-gnu-"
 
 export PATH="$CLANG_DIR/bin:$PATH"
