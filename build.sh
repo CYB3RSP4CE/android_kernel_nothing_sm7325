@@ -45,11 +45,11 @@ if test -z "$(git rev-parse --show-cdup 2>/dev/null)" &&
    head=$(git rev-parse --verify HEAD 2>/dev/null); then
         ZIPNAME="${ZIPNAME::-4}-$(echo $head | cut -c1-8).zip"
 fi
-CLANG_DIR="$TC_DIR/linux-x86/clang-r536225"
+CLANG_DIR="$TC_DIR/linux-x86/clang-r547379"
 AK3_DIR="$HOME/AnyKernel3"
 DEFCONFIG="spacewar_defconfig"
 
-MAKE_PARAMS="O=out ARCH=arm64 CC=clang CLANG_TRIPLE=clang LLVM=1 LLVM_IAS=1 \
+MAKE_PARAMS="O=out ARCH=arm64 CC=clang CLANG_TRIPLE=aarch64-linux-gnu- LLVM=1 LLVM_IAS=1 \
 	CROSS_COMPILE=aarch64-linux-gnu-"
 
 export PATH="$CLANG_DIR/bin:$PATH"
@@ -91,7 +91,7 @@ if [ -f "$kernel" ] && [ -d "$dts_dir" ]; then
 	cat $dts_dir/*.dtb > AnyKernel3/dtb
 	python3 scripts/mkdtboimg.py create AnyKernel3/dtbo.img --page_size=4096 $dts_dir/*.dtbo
 	mkdir AnyKernel3/modules/vendor/lib/modules/5.4.287-NetHunter/
-	#cp $(find out/net/* -name '*.ko') AnyKernel3/modules/vendor/lib/modules/5.4.287-NetHunter/
+	cp $(find out/net/* -name '*.ko') AnyKernel3/modules/vendor/lib/modules/5.4.287-NetHunter/
 	cp $(find out/drivers/* -name '*.ko') AnyKernel3/modules/vendor/lib/modules/5.4.287-NetHunter/
 	cp out/modules/lib/modules/5.4*/modules.{alias,dep,softdep} AnyKernel3/modules/vendor/lib/modules/5.4.287-NetHunter/
 	cp out/modules/lib/modules/5.4*/modules.order AnyKernel3/modules/vendor/lib/modules/5.4.287-NetHunter/modules.load
