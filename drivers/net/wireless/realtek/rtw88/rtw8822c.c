@@ -2622,9 +2622,6 @@ static void query_phy_status_page1(struct rtw_dev *rtwdev, u8 *phy_status,
 	else
 		bw = RTW_CHANNEL_WIDTH_80;
 
-	channel = GET_PHY_STAT_P1_CHANNEL(phy_status);
-	rtw_set_rx_freq_band(pkt_stat, channel);
-
 	pkt_stat->rx_power[RF_PATH_A] = GET_PHY_STAT_P1_PWDB_A(phy_status) - 110;
 	pkt_stat->rx_power[RF_PATH_B] = GET_PHY_STAT_P1_PWDB_B(phy_status) - 110;
 	pkt_stat->rssi = rtw_phy_rf_power_2_rssi(pkt_stat->rx_power, 2);
